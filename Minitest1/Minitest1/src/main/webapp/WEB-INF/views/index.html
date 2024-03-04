@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="/layout::head">
+    <meta charset="UTF-8">
+    <title>List Computer</title>
+</head>
+<body>
+<h3>Computer</h3>
+<p>
+    <a th:href="@{/computers/create}">
+        Add new computer
+    </a>
+</p>
+
+<div class="notify">
+    <div th:if="${success}">
+        <h3 th:text="${success}"></h3>
+    </div>
+</div>
+
+<table id = "computer">
+    <thead>
+    <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Producer</th>
+        <th>Image</th>
+        <th>Update</th>
+        <th>Delete</th>
+        <th>View</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="row,rowStat : ${computerList}">
+        <td th:text="${row.code}"></td>
+        <td th:text="${row.name}"></td>
+        <td th:text="${row.producer}"></td>
+        <td><img th:src="@{'/image/'+${row.getImg()}}" width="150" alt=""></td>
+        <td><a th:href="@{/computers/{id}/edit(id=${row.getId()})}">edit</a></td>
+        <td><a th:href="@{/computers/{id}/delete(id=${row.getId()})}">delete</a></td>
+        <td><a th:href="@{/computers/{id}/view(id=${row.getId()})}">view</a></td>
+    </tr>
+    </tbody>
+</table>
+<footer th:replace="/layout :: footer"></footer>
+</body>
+</html>
