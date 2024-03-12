@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show blog list</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #category-list {
+            width: 200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        #category-list h2 {
+            text-align: center;
+            color: #6c757d;
+        }
+
+        #category-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #category-list ul li {
+            margin-bottom: 10px;
+        }
+
+        #category-list ul li a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        form {
+            margin-bottom: 10px;
+            margin-left: 110px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        form input[type="text"], form textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        form input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        #pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #pagination a {
+            display: inline-block;
+            padding: 10px;
+            margin: 0 5px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        #pagination span {
+            display: inline-block;
+            padding: 10px;
+            margin: 0 5px;
+            background-color: #f8f9fa;
+            color: #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Blog List</h1>
+<p>
+    <a th:href="@{/blogs/create}">Create new blog</a>
+</p>
+<p>
+    <a th:href="@{/categories}">
+        Categories
+    </a>
+</p>
+<div id="category-list">
+    <h2>Danh mục</h2>
+    <ul th:each="category : ${categories}">
+        <li><a th:href="@{'/blogs/category/' + ${category.id}}" th:text="${category.name}"></a></li>
+    </ul>
+</div>
+<div style="margin-bottom: 10px; margin-left: 110px">
+    <form th:action="@{/blogs/search}" method="get">
+        <label><input type="text" name="search"></label>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+<div th:if="${selectedCategory != null}">
+    <h2 th:text="'Category: ' + ${selectedCategory.name}"></h2>
+</div>
+<table border="1">
+    <thead>
+    <tr>
+        <td>Id</td>
+        <td>Name</td>
+        <td>Content</td>
+        <td>Image link</td>
+        <td>Category</td>
+        <td>Edit</td>
+        <td>Delete</td>
+        <td>View</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="blog,blogAt : ${blogs}">
+        <td th:text="${blogAt.count}"/>
+        <td th:text="${blog.name}"></td>
+        <td th:text="${blog.content}"></td>
+        <td><img th:src="${blog.image}" alt="Blog Image"></td>
+        <td th:text="${blog.getCategory().getName()}"></td>
+        <td><a th:href="@{'/blogs/edit/' + ${blog.id}}">Edit</a></td>
+        <td><a th:href="@{'/blogs/delete/' + ${blog.id}}">Delete</a></td>
+        <td><a th:href="@{'/blogs/view/' + ${blog.id}}">View</a></td>
+    </tr>
+    </tbody>
+</table>
+<a class="btn btn-primary" th:if="${blogs.hasPrevious()}"
+   th:href="@{/blogs(page=${blogs.number - 1})}">Previous</a>
+<span th:text="${blogs.number + 1}"></span> | <span th:text="${blogs.totalPages}"></span>
+<a class="btn btn-primary" th:if="${blogs.hasNext()}"
+   th:href="@{/blogs(page=${blogs.number + 1})}">Next</a>
+</body>
+</html>

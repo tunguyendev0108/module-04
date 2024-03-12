@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+
+        form {
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        form p {
+            margin: 10px 0;
+        }
+
+        form input[type="text"], form textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+        }
+
+        form input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #4CAF50;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Edit Blog</h1>
+<form action="#" th:action="@{/blogs/edit}" th:object="${blog}" method="post">
+    <p>Name: <input type="text" th:field="*{name}"></p>
+    <p>Content: <textarea th:field="*{content}"></textarea></p>
+    <p>Image Link: <input type="text" th:field="*{image}"></p>
+    <p>Category:
+        <select th:field="*{category}">
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+        </select>
+    </p>
+    <p><input type="submit" value="Submit"></p>
+</form>
+
+</body>
+</html>
