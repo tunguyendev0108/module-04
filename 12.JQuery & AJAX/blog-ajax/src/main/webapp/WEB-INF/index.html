@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="searchForm">
+    <input type="text" id="searchInput" placeholder="Nhập từ khóa..." required>
+    <button type="button" onclick="searchBlogs()">Tìm kiếm</button>
+</form>
+
+
+<div id="blogList"></div>
+<button id="loadMoreBtn" onclick="loadMoreBlogs()">Tải thêm</button>
+
+<script>
+    let currentPage = 0;
+
+    function displayAllBlogs() {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/api/blogs',
+            success: function (data) {
+                displayBlogList(data);
+            },
+            error: function () {
+                alert('Có lỗi xảy ra khi lấy danh sách blog.');
+            }
+        });
+    }
+
+    function searchBlogs() {
+        currentPage = 0;
+        const keyword = $('#searchInput').val().trim();
+        if (keyword.length === 0) {
+            alert('Vui lòng nhập từ khóa tìm kiếm.');
+            return;
+        }
+        const pageSize = 20;
+
+        $.ajax({
+            type: 'GET',
+            url: `http://localhost:8080/api/blogs/search?keyword=${keyword}&page=${currentPage}&pageSize=${pageSize}`,
+            success: function (data) {
+                displayBlogList(data);
+            },
+            error: function () {
+                alert('Có lỗi xảy ra khi tìm kiếm blog.');
+            }
+        });
+    }
+
+
+    function loadMoreBlogs() {
+        currentPage++;
+        const keyword = $('#searchInput').val();
+        const pageSize = 20;
+
+        $.ajax({
+            type: 'GET',
+            url: `http://localhost:8080/api/blogs/search?keyword=${keyword}&page=${currentPage}&pageSize=${pageSize}`,
+            success: function (data) {
+                if (data.length > 0) {
+                    displayBlogList(data);
+                } else {
+                    $('#loadMoreBtn').hide();
+                }
+            },
+            error: function () {
+                alert('Có lỗi xảy ra khi tải thêm blog.');
+            }
+        });
+    }
+
+    function displayBlogList(data) {
+        let content = '<table id="display-list" border="1"><tr>' +
+            '<th>ID</th>' +
+            '<th>Tiêu đề</th>' +
+            '<th>Mô tả</th>' +
+            '<th>Thể loại</th>' +
+            '</tr>';
+
+        for (let i = 0; i < data.length; i++) {
+            content += getBlog(data[i]);
+        }
+
+        content += '</table>';
+        document.getElementById('blogList').innerHTML = content;
+    }
+
+    function getBlog(blog) {
+        return `<tr>
+                    <td>${blog.id}</td>
+                    <td>${blog.name}</td>
+                    <td>${blog.description}</td>
+                    <td>${blog.category.name}</td>
+                </tr>`;
+    }
+
+    displayAllBlogs();
+</script>
+</body>
+</html>
